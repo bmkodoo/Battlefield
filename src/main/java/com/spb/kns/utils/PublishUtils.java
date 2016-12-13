@@ -1,6 +1,7 @@
-package com.spb.kns;
+package com.spb.kns.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.spb.kns.Solder;
 import ros.Publisher;
 import ros.RosBridge;
 

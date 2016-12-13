@@ -1,7 +1,6 @@
 package com.spb.kns;
 
-import ros.Publisher;
-import ros.RosBridge;
+import com.spb.kns.utils.PublishUtils;
 
 import java.util.HashMap;
 import java.util.Map;
