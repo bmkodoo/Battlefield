@@ -30,13 +30,13 @@ public class SolderAlive implements Runnable  {
 
     @Override
     public void run() {
-        System.err.printf("%s [%s]: (%1.2f, %1.2f) %f\n",
+        /*System.err.printf("%s [%s]: (%1.2f, %1.2f) %f\n",
                 Integer.toHexString(this.hashCode()),
                 state,
                 solder.getX(),
                 solder.getY(),
                 solder.getAngle()
-        );
+        );*/
 
         if (state == State.STAND) {
             decideToMoveToRandom();

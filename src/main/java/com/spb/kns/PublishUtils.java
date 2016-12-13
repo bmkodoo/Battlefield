@@ -1,5 +1,6 @@
 package com.spb.kns;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import ros.Publisher;
 import ros.RosBridge;
 
@@ -20,13 +21,14 @@ public class PublishUtils {
     private static Publisher positionPublisher = new Publisher("/solders_positions", "std_msgs/String", bridge);
 
     public static void sendSolderPosition(Solder solder) {
-        final Map<String, String> strData = new HashMap<String, String>();
-        strData.put("id", String.valueOf(solder.getId()));
-        strData.put("team", String.valueOf(solder.getTeam()));
-        strData.put("angle", String.valueOf(solder.getAngle()));
-        strData.put("x", String.valueOf(solder.getX()));
-        strData.put("y", String.valueOf(solder.getY()));
+        final StringBuilder json = new StringBuilder();
+        json.append("{ data: {")
+                .append("id: ").append(String.valueOf(solder.getId())).append(", ")
+                .append("team: ").append(String.valueOf(solder.getTeam())).append(", ")
+                .append("x: ").append(String.valueOf(solder.getX())).append(", ")
+                .append("y: ").append(String.valueOf(solder.getY()))
+            .append("}}");
 
-        positionPublisher.publish(strData);
+        positionPublisher.publishJsonMsg(String.valueOf(json));
     }
 }

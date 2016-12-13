@@ -11,6 +11,7 @@ public class Solder {
     private final int id = solders_count++;
 
     private final int team;
+    private boolean wasLaunched = false;
 
     public Solder(double x, double y, int team) {
         this.x = x;
@@ -19,6 +20,10 @@ public class Solder {
     }
 
     public SolderAlive launch() {
+        if (wasLaunched) {
+            throw new RuntimeException("Was already launched!");
+        }
+        wasLaunched = true;
         return new SolderAlive(this);
     }
 
