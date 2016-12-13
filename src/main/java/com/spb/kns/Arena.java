@@ -49,6 +49,10 @@ public class Arena {
 
         Arena arena = new Arena();
         arena.createRandomSolder(0);
+        arena.createRandomSolder(0);
+        arena.createRandomSolder(0);
+        arena.createRandomSolder(0);
+
         arena.launch();
     }
 }

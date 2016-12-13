@@ -23,12 +23,15 @@ public class PublishUtils {
 
     public static void sendSolderPosition(Solder solder) {
         final StringBuilder json = new StringBuilder();
-        json.append("{ data: {")
-                .append("id: ").append(String.valueOf(solder.getId())).append(", ")
-                .append("team: ").append(String.valueOf(solder.getTeam())).append(", ")
-                .append("x: ").append(String.valueOf(solder.getX())).append(", ")
-                .append("y: ").append(String.valueOf(solder.getY()))
-            .append("}}");
+        json.append("{ \"data\": \"")
+                .append(String.valueOf(solder.getId())).append(" ")
+                .append(String.valueOf(solder.getTeam())).append(" ")
+                .append(String.valueOf(solder.getX())).append(" ")
+                .append(String.valueOf(solder.getY())).append(" ")
+                .append(String.valueOf(solder.getAngle()))
+            .append("\"}");
+
+        System.err.println("PUBLISH " + String.valueOf(json));
 
         positionPublisher.publishJsonMsg(String.valueOf(json));
     }
