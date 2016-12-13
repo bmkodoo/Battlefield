@@ -48,10 +48,9 @@ public class Arena {
     public static void main(String[] args) {
 
         Arena arena = new Arena();
-        arena.createRandomSolder(0);
-        arena.createRandomSolder(0);
-        arena.createRandomSolder(0);
-        arena.createRandomSolder(0);
+        for (int i = 0; i < 30; i++) {
+            arena.createRandomSolder(0);
+        }
 
         arena.launch();
     }

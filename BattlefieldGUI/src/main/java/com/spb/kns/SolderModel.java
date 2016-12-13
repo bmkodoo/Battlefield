@@ -1,6 +1,10 @@
 package com.spb.kns;
 
-public class Solder {
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+public class SolderModel {
 
     private static int solders_count = 0;
 
@@ -13,7 +17,7 @@ public class Solder {
     private final int team;
     private boolean wasLaunched = false;
 
-    public Solder(double x, double y, int team) {
+    public SolderModel(double x, double y, int team) {
         this.x = x;
         this.y = y;
         this.team = team;
@@ -50,4 +54,5 @@ public class Solder {
     public void setAngle(double angle) {
         this.angle = angle;
     }
+
 }
