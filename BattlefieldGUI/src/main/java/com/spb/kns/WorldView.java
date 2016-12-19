@@ -7,10 +7,8 @@ import java.awt.image.AffineTransformOp;
 
 
 class WorldView extends JPanel {
-    public static final double SCALE = 32;
+    public static final double SCALE = 64;
 
-    private int yOffset = 0;
-    private int yDelta = 4;
     private WorldModel world;
 
 
@@ -22,7 +20,7 @@ class WorldView extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(640 , 480);
+        return new Dimension(800 , 600);
     }
 
     @Override

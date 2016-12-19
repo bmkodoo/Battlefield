@@ -1,13 +1,6 @@
 package com.spb.kns;
 
-import com.spb.kns.structures.Command;
-import com.spb.kns.utils.PublishUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class Arena {
 
@@ -15,6 +8,7 @@ public class Arena {
     static final double H = 10;
     static final double W = 10;
     private static final long UPDATE_TIME = 50;
+    public static final int MAX_TEAMS = 2;
 
     private boolean wasLaunched = false;
 
@@ -48,22 +42,13 @@ public class Arena {
             solder.launch();
         }
 
+        new Commander(0);
+        new Commander(1);
+
         arena.launch();
 
         Thread.sleep(1000);
 
-        Solder solder = new Solder(
-                rand.nextDouble() * W,
-                rand.nextDouble() * H,
-                0, -1);
-        solder.launch();
-        PublishUtils.sendCommand(new Command(
-                0,
-                Command.Type.MOVE,
-                0,
-                0,
-                0,
-                0
-        ));
+
     }
 }
