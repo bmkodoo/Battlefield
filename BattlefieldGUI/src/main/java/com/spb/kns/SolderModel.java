@@ -6,21 +6,20 @@ import java.io.IOException;
 
 public class SolderModel {
 
-    private static int solders_count = 0;
-
     private double x;
     private double y;
     private double angle;
 
-    private final int id = solders_count++;
+    private final int id;
 
     private final int team;
     private boolean wasLaunched = false;
 
-    public SolderModel(double x, double y, int team) {
+    public SolderModel(double x, double y, int team, int id) {
         this.x = x;
         this.y = y;
         this.team = team;
+        this.id = id;
     }
 
     public double getX() {

@@ -6,10 +6,12 @@ import java.io.IOException;
 
 public class Resources {
     public final static BufferedImage panzer;
+    public static BufferedImage panzer_2;
 
     static {
         try {
             panzer = ImageIO.read(SolderModel.class.getResourceAsStream("panzeriv_h.gif"));
+            panzer_2 = ImageIO.read(SolderModel.class.getResourceAsStream("tango-tank.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

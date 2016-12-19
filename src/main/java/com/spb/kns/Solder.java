@@ -1,22 +1,24 @@
 package com.spb.kns;
 
-public class Solder {
+import java.util.concurrent.atomic.AtomicInteger;
 
-    private static int solders_count = 0;
+public class Solder extends Unit {
 
-    private double x;
-    private double y;
-    private double angle;
+    private static AtomicInteger solders_count = new AtomicInteger();
+    private static double SIZE = 1;
 
-    private final int id = solders_count++;
+    private int id;
 
     private final int team;
     private boolean wasLaunched = false;
 
-    public Solder(double x, double y, int team) {
-        this.x = x;
-        this.y = y;
+    private Unit back;
+
+    public Solder(double x, double y, int team, int id) {
+        super(x, y);
         this.team = team;
+        this.back = new Unit(x, y);
+        this.id = id;
     }
 
     public SolderAlive launch() {
@@ -27,18 +29,6 @@ public class Solder {
         return new SolderAlive(this);
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getAngle() {
-        return angle;
-    }
-
     public int getId() {
         return id;
     }
@@ -47,15 +37,14 @@ public class Solder {
         return team;
     }
 
-    public void setX(double x) {
-        this.x = x;
+
+    public Unit getBackPosition() {
+        return back;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setAngle(double angle) {
-        this.angle = angle;
-    }
+
 }

@@ -34,7 +34,21 @@ class WorldView extends JPanel {
             double locationY = Resources.panzer.getHeight() / 2;
             AffineTransform tx = AffineTransform.getRotateInstance(solder.getAngle(), locationX, locationY);
             AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-            g2d.drawImage(op.filter(Resources.panzer, null), (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE), this);
+
+            if (solder.getId() == -1) {
+                g.drawString("x (" + solder.getTeam() + ")", (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE));
+                return;
+            }
+
+            switch (solder.getTeam()) {
+                case 0:
+                    g2d.drawImage(op.filter(Resources.panzer, null), (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE), this);
+                    break;
+                case 1:
+                    g2d.drawImage(op.filter(Resources.panzer_2, null), (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE), this);
+            }
+
+            g.drawString(String.valueOf(solder.getId()), (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE + 60));
         });
         g2d.dispose();
     }
