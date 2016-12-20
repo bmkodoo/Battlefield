@@ -10,6 +10,7 @@ import java.awt.image.AffineTransformOp;
 
 class WorldView extends JPanel {
     public static final double SCALE = 64;
+    public static final int RADIUS = 150;
 
     private WorldModel world;
 
@@ -68,6 +69,8 @@ class WorldView extends JPanel {
             g.drawString(
                     "[" + solder.getId() + "]" + solder.getHp() + "/100",
                     (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE + 60));
+            g.setColor(Color.orange);
+            g.drawOval((int) (solder.getX() * SCALE - RADIUS/2), (int) (solder.getY() * SCALE - RADIUS/2), RADIUS, RADIUS);
         });
     }
 }
