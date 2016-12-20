@@ -42,8 +42,8 @@ public class Arena {
             solder.launch();
         }
 
-        new Commander(0);
-        new Commander(1);
+        new Commander(0, 4);
+        new Commander(1, 2);
 
         arena.launch();
 

@@ -1,5 +1,6 @@
 package com.spb.kns.utils;
 
+import com.spb.kns.structures.Bullet;
 import com.spb.kns.structures.Command;
 import com.spb.kns.Solder;
 import ros.Publisher;
@@ -18,7 +19,7 @@ public class PublishUtils {
 
     private static Publisher positionPublisher = new Publisher("/solders_positions", "std_msgs/String", bridge);
     private static Publisher commandsPublisher = new Publisher("/commands", "std_msgs/String", bridge);
-
+    private static Publisher bulletsPublisher = new Publisher("/bullets", "std_msgs/String", bridge);
 
     public static void sendSolderPosition(Solder solder) {
         final StringBuilder json = new StringBuilder();
@@ -29,8 +30,6 @@ public class PublishUtils {
                 .append(String.valueOf(solder.getY())).append(" ")
                 .append(String.valueOf(solder.getAngle()))
             .append("\"}");
-
-        System.err.println("PUBLISH POS" + String.valueOf(json));
 
         positionPublisher.publishJsonMsg(String.valueOf(json));
     }
@@ -46,8 +45,20 @@ public class PublishUtils {
                 .append(String.valueOf(command.y))
                 .append("\"}");
 
-        System.err.println("PUBLISH COMMAND" + String.valueOf(json));
-
         commandsPublisher.publishJsonMsg(String.valueOf(json));
+    }
+
+    public static void sendBullet(Bullet bullet) {
+        final StringBuilder json = new StringBuilder();
+        json.append("{ \"data\": \"")
+                .append(String.valueOf(bullet.team)).append(" ")
+                .append(String.valueOf(bullet.angle)).append(" ")
+                .append(String.valueOf(bullet.x)).append(" ")
+                .append(String.valueOf(bullet.y))
+                .append("\"}");
+
+        System.err.println("FIRESEND " + json);
+
+        bulletsPublisher.publishJsonMsg(String.valueOf(json));
     }
 }

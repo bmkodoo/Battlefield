@@ -1,6 +1,7 @@
 package com.spb.kns;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.spb.kns.structures.Bullet;
 import ros.RosBridge;
 
 import java.util.Scanner;
@@ -34,6 +35,13 @@ public class WorldFromROSUpdater implements Runnable {
 
                     world.getSolders().put(msg.id + msg.team * 100, new SolderModel(msg.x, msg.y, msg.team, msg.id));
                 }
+            }
+        );
+
+        bridge.subscribe("/bullets", "std_msgs/String",
+            (data, stringRep) -> {
+                Bullet bullet = new Bullet(data);
+                world.bulletHere(bullet);
             }
         );
     }

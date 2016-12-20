@@ -1,5 +1,6 @@
 package com.spb.kns;
 
+import com.spb.kns.structures.Bullet;
 import com.spb.kns.structures.Command;
 import com.spb.kns.structures.WorldObject;
 import com.spb.kns.utils.PublishUtils;
@@ -38,6 +39,7 @@ public class SolderAlive implements Runnable  {
     private int tickCount = 0;
 
     SolderAlive(Solder solder) {
+        destination = new Solder(0, 0, solder.getTeam(), -2);
         this.solder = solder;
         alias = new HashMap<>();
         threadPool.scheduleAtFixedRate(this, DELAY, DELAY, TimeUnit.MILLISECONDS);
@@ -75,7 +77,7 @@ public class SolderAlive implements Runnable  {
         bridge.subscribe("/commands", "std_msgs/String",
                 (data, stringRep) -> {
                     Command command = new Command(data);
-                    if (command.team != solder.getTeam()) {
+                    if (command.team != solder.getTeam() || solder.getId() == -1) {
                         return;
                     }
 
@@ -100,7 +102,10 @@ public class SolderAlive implements Runnable  {
                             break;
 
                         case FIRE:
+                            System.out.println("(" + solder.getId() + ")Here FIRE command!");
                             state = State.FIRE;
+                            solder.setAngle(command.alpha);
+                            destination = new Solder(0, 0, solder.getTeam(), -2);
                             destination.setAngle(command.alpha);
                     }
                 }
@@ -144,6 +149,14 @@ public class SolderAlive implements Runnable  {
 
             case MOVING:
                 if (isReachDestination()) {
+                    PublishUtils.sendCommand(new Command(
+                            solder.getTeam(),
+                            Command.Type.DONE,
+                            solder.getId(),
+                            0,
+                            0,
+                            0
+                    ));
                     return;
                 }
 
@@ -152,7 +165,12 @@ public class SolderAlive implements Runnable  {
 
             case FIRE:
                 if (tickCount % FIRE_SPEED == 0) {
-                    //TODO: fire
+                    PublishUtils.sendBullet(new Bullet(
+                            solder.getTeam(),
+                            destination.getAngle(),
+                            solder.x,
+                            solder.y
+                    ));
                 }
         }
     }
