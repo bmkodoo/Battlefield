@@ -57,6 +57,13 @@ class WorldView extends JPanel {
                 return;
             }
 
+            if (solder.getHp() <= 0) {
+                tx = AffineTransform.getRotateInstance(0, locationX, locationY);
+                op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+                g2d.drawImage(op.filter(Resources.rip, null), (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE), this);
+                return;
+            }
+
             switch (solder.getTeam()) {
                 case 0:
                     g2d.drawImage(op.filter(Resources.panzer, null), (int) (solder.getX() * SCALE - locationX/2), (int) (solder.getY() * SCALE - locationX/2), this);

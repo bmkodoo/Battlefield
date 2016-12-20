@@ -1,12 +1,12 @@
 package com.spb.kns;
 
 import com.spb.kns.structures.Command;
+import com.spb.kns.utils.CircleLine;
 import com.spb.kns.utils.PublishUtils;
 import ros.RosBridge;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,12 +20,19 @@ public class Commander implements Runnable {
     private Random rand = new Random();
 
     private Map<Integer, Boolean> ready;
+    private List<CircleLine.Point> anemys;
 
     private int team;
+    private int anemyIndex = 0;
 
     public Commander(int team, int solderCount) {
         this.team = team;
         this.ready = new HashMap<>(solderCount);
+
+        this.anemys = new ArrayList<>(2);
+        anemys.add(0, new CircleLine.Point(0, 0));
+        anemys.add(1, new CircleLine.Point(0, 0));
+
         for (int i = 0; i < solderCount; i++) {
             ready.put(i, false);
         }
@@ -49,6 +56,12 @@ public class Commander implements Runnable {
                     }
 
                     switch (command.type) {
+                        case ANEMY:
+                            anemyIndex++;
+                            anemys.add(anemyIndex % 2, new CircleLine.Point(command.x, command.y));
+                            break;
+                        case INJURED:
+                            ready.remove(command.id);
                         case DONE:
                             System.err.println(team + " Catch done from " + command.id);
                             ready.values().forEach((v) -> {
@@ -62,7 +75,10 @@ public class Commander implements Runnable {
                                         team,
                                         Command.Type.FIRE,
                                         0,
-                                        rand.nextDouble() * 2 * Math.PI,
+                                        Math.atan2(
+                                            anemys.get(0).y - aim.getY(),
+                                            anemys.get(0).x - aim.getX()
+                                        ),
                                         0,
                                         0
                                 ));

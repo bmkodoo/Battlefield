@@ -64,16 +64,19 @@ public class SolderAlive implements Runnable  {
                     if (object.team == solder.getTeam()) {
                         updateAlias(object);
                     } else if (isNear(object)) {
-//                        PublishUtils.sendCommand(
-//                                new Command(
-//                                        solder.getTeam(),
-//                                        Command.Type.ANEMY,
-//                                        object.id,
-//                                        0,
-//                                        object.x,
-//                                        object.y
-//                                )
-//                        );
+                        if (state != State.MOVING)
+                            return;
+
+                        PublishUtils.sendCommand(
+                                new Command(
+                                        solder.getTeam(),
+                                        Command.Type.ANEMY,
+                                        object.id,
+                                        0,
+                                        object.x,
+                                        object.y
+                                )
+                        );
                     }
                 }
         );
@@ -112,7 +115,6 @@ public class SolderAlive implements Runnable  {
                             break;
 
                         case FIRE:
-                            System.out.println("(" + solder.getId() + ")Here FIRE command!");
                             state = State.FIRE;
                             solder.setAngle(command.alpha);
                             destination = new Solder(0, 0, solder.getTeam(), -2);
@@ -197,10 +199,10 @@ public class SolderAlive implements Runnable  {
 
     @Override
     public void run() {
-        if (injured) return;
-
         tickCount++;
         PublishUtils.sendSolderPosition(solder);
+
+        if (injured) return;
 
         /*System.err.printf("%s [%s]: (%1.2f, %1.2f) %f\n",
                 Integer.toHexString(this.hashCode()),
@@ -233,7 +235,7 @@ public class SolderAlive implements Runnable  {
                 if (tickCount % FIRE_SPEED == 0) {
                     PublishUtils.sendBullet(new Bullet(
                             solder.getTeam(),
-                            destination.getAngle(),
+                            destination.getAngle() + 0.5 - rand.nextDouble(),
                             solder.x,
                             solder.y
                     ));
