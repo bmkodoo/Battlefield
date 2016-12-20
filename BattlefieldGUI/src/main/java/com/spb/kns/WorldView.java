@@ -65,7 +65,9 @@ class WorldView extends JPanel {
             }
 
             g.setColor(Color.black);
-            g.drawString(String.valueOf(solder.getId()), (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE + 60));
+            g.drawString(
+                    "[" + solder.getId() + "]" + solder.getHp() + "/100",
+                    (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE + 60));
         });
     }
 }

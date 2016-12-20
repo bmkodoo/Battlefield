@@ -28,7 +28,8 @@ public class PublishUtils {
                 .append(String.valueOf(solder.getTeam())).append(" ")
                 .append(String.valueOf(solder.getX())).append(" ")
                 .append(String.valueOf(solder.getY())).append(" ")
-                .append(String.valueOf(solder.getAngle()))
+                .append(String.valueOf(solder.getAngle())).append(" ")
+                .append(String.valueOf(solder.getHp()))
             .append("\"}");
 
         positionPublisher.publishJsonMsg(String.valueOf(json));

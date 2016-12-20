@@ -12,6 +12,8 @@ public class Solder extends Unit {
     private final int team;
     private boolean wasLaunched = false;
 
+    int hp = 100;
+
     private Unit back;
 
     public Solder(double x, double y, int team, int id) {
@@ -47,4 +49,7 @@ public class Solder extends Unit {
     }
 
 
+    public int getHp() {
+        return hp;
+    }
 }

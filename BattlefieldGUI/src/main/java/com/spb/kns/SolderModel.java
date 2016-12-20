@@ -15,11 +15,14 @@ public class SolderModel {
     private final int team;
     private boolean wasLaunched = false;
 
-    public SolderModel(double x, double y, int team, int id) {
+    private int hp;
+
+    public SolderModel(double x, double y, int team, int id, int hp) {
         this.x = x;
         this.y = y;
         this.team = team;
         this.id = id;
+        this.hp = hp;
     }
 
     public double getX() {
@@ -54,4 +57,11 @@ public class SolderModel {
         this.angle = angle;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
 }

@@ -10,6 +10,7 @@ public class WorldObject {
     public double x;
     public double y;
     public double angle;
+    public int hp;
 
     public WorldObject(JsonNode json) {
         String d = json.findValue("data").toString();
@@ -21,6 +22,7 @@ public class WorldObject {
             x = scan.nextDouble();
             y = scan.nextDouble();
             angle = scan.nextDouble();
+            hp = scan.nextInt();
         }
     }
 }

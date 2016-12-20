@@ -2,6 +2,7 @@ package com.spb.kns;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.spb.kns.structures.Bullet;
+import com.spb.kns.structures.WorldObject;
 import ros.RosBridge;
 
 import java.util.Scanner;
@@ -25,7 +26,7 @@ public class WorldFromROSUpdater implements Runnable {
         bridge.waitForConnection();
         bridge.subscribe("/solders_positions", "std_msgs/String",
             (data, stringRep) -> {
-                Msg msg = new Msg(data);
+                WorldObject msg = new WorldObject(data);
                 SolderModel solder;
                 if ((solder = world.getSolders().get(msg.id + msg.team * 100)) != null) {
                     solder.setX(msg.x);
@@ -33,7 +34,7 @@ public class WorldFromROSUpdater implements Runnable {
                     solder.setAngle(msg.angle);
                 } else {
 
-                    world.getSolders().put(msg.id + msg.team * 100, new SolderModel(msg.x, msg.y, msg.team, msg.id));
+                    world.getSolders().put(msg.id + msg.team * 100, new SolderModel(msg.x, msg.y, msg.team, msg.id, msg.hp));
                 }
             }
         );
@@ -44,26 +45,5 @@ public class WorldFromROSUpdater implements Runnable {
                 world.bulletHere(bullet);
             }
         );
-    }
-
-    static class Msg {
-        int id;
-        int team;
-        double x;
-        double y;
-        double angle;
-
-        Msg(JsonNode json) {
-            String d = json.findValue("data").toString();
-            d = d.substring(1, d.length() - 1);
-            try (Scanner scan = new Scanner(d)) {
-                id = scan.nextInt();
-                team = scan.nextInt();
-
-                x = scan.nextDouble();
-                y = scan.nextDouble();
-                angle = scan.nextDouble();
-            }
-        }
     }
 }
