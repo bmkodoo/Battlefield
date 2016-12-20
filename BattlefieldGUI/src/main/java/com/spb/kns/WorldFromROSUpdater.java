@@ -32,6 +32,7 @@ public class WorldFromROSUpdater implements Runnable {
                     solder.setX(msg.x);
                     solder.setY(msg.y);
                     solder.setAngle(msg.angle);
+                    solder.setHp(msg.hp);
                 } else {
 
                     world.getSolders().put(msg.id + msg.team * 100, new SolderModel(msg.x, msg.y, msg.team, msg.id, msg.hp));

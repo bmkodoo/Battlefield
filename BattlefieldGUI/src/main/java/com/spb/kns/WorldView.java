@@ -31,7 +31,7 @@ class WorldView extends JPanel {
         Graphics2D g2d = (Graphics2D) g.create();
         drawSoldersAndAims(g, g2d);
         while (!world.getBullets().isEmpty()) {
-            Bullet bullet = world.getBullets().pop();
+            Bullet bullet = world.getBullets().poll();
             g.setColor(Color.red);
             g.drawLine(
                     (int) (bullet.x * SCALE),
@@ -58,10 +58,10 @@ class WorldView extends JPanel {
 
             switch (solder.getTeam()) {
                 case 0:
-                    g2d.drawImage(op.filter(Resources.panzer, null), (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE), this);
+                    g2d.drawImage(op.filter(Resources.panzer, null), (int) (solder.getX() * SCALE - locationX/2), (int) (solder.getY() * SCALE - locationX/2), this);
                     break;
                 case 1:
-                    g2d.drawImage(op.filter(Resources.panzer_2, null), (int) (solder.getX() * SCALE), (int) (solder.getY() * SCALE), this);
+                    g2d.drawImage(op.filter(Resources.panzer_2, null), (int) (solder.getX() * SCALE - locationX/2), (int) (solder.getY() * SCALE - locationX/2), this);
             }
 
             g.setColor(Color.black);

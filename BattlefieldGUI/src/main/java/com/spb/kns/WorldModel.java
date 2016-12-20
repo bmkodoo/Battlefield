@@ -5,16 +5,17 @@ import com.spb.kns.structures.Bullet;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WorldModel {
 
     private Map<Integer, SolderModel> solders;
-    private Deque<Bullet> bullets;
+    private ArrayBlockingQueue<Bullet> bullets;
 
     WorldModel() {
         solders = new ConcurrentHashMap<>();
-        bullets = new ArrayDeque<>();
+        bullets = new ArrayBlockingQueue<>(100);
     }
 
     public Map<Integer, SolderModel> getSolders() {
@@ -22,10 +23,10 @@ public class WorldModel {
     }
 
     public void bulletHere(Bullet bullet) {
-        bullets.push(bullet);
+        bullets.offer(bullet);
     }
 
-    public Deque<Bullet> getBullets() {
+    public ArrayBlockingQueue<Bullet> getBullets() {
         return bullets;
     }
 }

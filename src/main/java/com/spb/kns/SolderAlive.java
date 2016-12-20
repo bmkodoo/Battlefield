@@ -3,10 +3,12 @@ package com.spb.kns;
 import com.spb.kns.structures.Bullet;
 import com.spb.kns.structures.Command;
 import com.spb.kns.structures.WorldObject;
+import com.spb.kns.utils.CircleLine;
 import com.spb.kns.utils.PublishUtils;
 import ros.RosBridge;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -38,6 +40,8 @@ public class SolderAlive implements Runnable  {
 
     private int tickCount = 0;
 
+    private boolean injured = false;
+
     SolderAlive(Solder solder) {
         destination = new Solder(0, 0, solder.getTeam(), -2);
         this.solder = solder;
@@ -45,13 +49,17 @@ public class SolderAlive implements Runnable  {
         threadPool.scheduleAtFixedRate(this, DELAY, DELAY, TimeUnit.MILLISECONDS);
         listenObjects();
         listenCommands();
+        listenBullets();
     }
 
     private void listenObjects() {
+
         RosBridge bridge = RosBridge.createConnection(bridge_addr);
         bridge.waitForConnection();
         bridge.subscribe("/solders_positions", "std_msgs/String",
                 (data, stringRep) -> {
+                    if (injured) return;
+
                     WorldObject object = new WorldObject(data);
                     if (object.team == solder.getTeam()) {
                         updateAlias(object);
@@ -76,6 +84,8 @@ public class SolderAlive implements Runnable  {
         bridge.waitForConnection();
         bridge.subscribe("/commands", "std_msgs/String",
                 (data, stringRep) -> {
+                    if (injured) return;
+
                     Command command = new Command(data);
                     if (command.team != solder.getTeam() || solder.getId() == -1) {
                         return;
@@ -112,6 +122,60 @@ public class SolderAlive implements Runnable  {
         );
     }
 
+    private void listenBullets() {
+        if (solder.getId() == -1) return;
+
+        RosBridge bridge = RosBridge.createConnection(bridge_addr);
+        bridge.waitForConnection();
+        bridge.subscribe("/bullets", "std_msgs/String",
+                (data, stringRep) -> {
+                    if (injured) return;
+
+                    Bullet bullet = new Bullet(data);
+                    if (bullet.team == solder.getTeam()) {
+                        return;
+                    }
+
+                    List<CircleLine.Point> intersection = CircleLine.getCircleLineIntersectionPoint(
+                            new CircleLine.Point(bullet.x, bullet.y),
+                            new CircleLine.Point(
+                                    1000 * Math.cos(bullet.angle),
+                                    1000 * Math.sin(bullet.angle)
+                            ),
+                            new CircleLine.Point(solder.x, solder.y),
+                            SIZE
+                    );
+
+                    if (intersection.isEmpty()) {
+                        return;
+                    }
+
+                    CircleLine.Point point = intersection.get(0);
+                    if (distanceTo(point.x, point.y) < SIZE * 2.1) {
+                        solder.setHp(solder.getHp() - 5);
+                    }
+
+                    if (solder.hp < 0) {
+                        injured();
+                    }
+                }
+        );
+    }
+
+    private void injured() {
+        injured = true;
+        PublishUtils.sendCommand(new Command(
+                solder.getTeam(),
+                Command.Type.INJURED,
+                solder.getId(),
+                0,
+                0,
+                0
+        ));
+        solder.setId(rand.nextInt() * -1);
+        state = State.STAND;
+    }
+
     private boolean isNear(WorldObject object) {
         return distanceTo(object.x, object.y) < NEAR_DISTANCE;
     }
@@ -133,6 +197,8 @@ public class SolderAlive implements Runnable  {
 
     @Override
     public void run() {
+        if (injured) return;
+
         tickCount++;
         PublishUtils.sendSolderPosition(solder);
 
