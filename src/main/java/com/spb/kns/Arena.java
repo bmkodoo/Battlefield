@@ -34,7 +34,7 @@ public class Arena {
             solder.launch();
         }
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             Solder solder = new Solder(
                     rand.nextDouble() * W,
                     (rand.nextDouble() * (H / 2)) + (H / 2),
@@ -43,7 +43,7 @@ public class Arena {
         }
 
         new Commander(0, 4);
-        new Commander(1, 2);
+        new Commander(1, 3);
 
         arena.launch();
 

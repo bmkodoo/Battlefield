@@ -20,10 +20,13 @@ public class SolderAlive implements Runnable  {
     private static final ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(Arena.MAX_SOLDERS);
     private static final int DELAY = 100;
     private static final Random rand = new Random();
-    private static final double SPEED = 0.2;
     private static final double NEAR_DISTANCE = 20;
     private static final double SIZE = 1;
     private static final int FIRE_SPEED = 10;
+    public static final double NORM_SPEED = 0.15;
+    public static final double FAST_SPEED = 0.2;
+
+    private double speed = 0.2;
 
     private final Map<Integer, Solder> alias;
 
@@ -154,7 +157,7 @@ public class SolderAlive implements Runnable  {
 
                     CircleLine.Point point = intersection.get(0);
                     if (distanceTo(point.x, point.y) < SIZE * 2.1) {
-                        solder.setHp(solder.getHp() - 5);
+                        solder.setHp(solder.getHp() - 1);
                     }
 
                     if (solder.hp < 0) {
@@ -204,19 +207,12 @@ public class SolderAlive implements Runnable  {
 
         if (injured) return;
 
-        /*System.err.printf("%s [%s]: (%1.2f, %1.2f) %f\n",
-                Integer.toHexString(this.hashCode()),
-                state,
-                solder.getX(),
-                solder.getY(),
-                solder.getAngle()
-        );*/
         switch (state) {
             case STAND:
                 return;
 
             case MOVING:
-                if (isReachDestination()) {
+                if (distanceTo(destination.x, destination.y) <= SIZE) {
                     PublishUtils.sendCommand(new Command(
                             solder.getTeam(),
                             Command.Type.DONE,
@@ -225,10 +221,27 @@ public class SolderAlive implements Runnable  {
                             0,
                             0
                     ));
+                    System.out.println("PRIBIL");
                     return;
                 }
 
-                moveTowardDestination();
+                if (solder.getId() == 0) {
+                    moveToward(destination.x, destination.y);
+                } else if (solder.getId() % 2 == 1) {
+                    //to the back
+                    moveToward(
+                            destination.x - SIZE * Math.cos(destination.getAngle()),
+                            destination.y - SIZE * Math.sin(destination.getAngle())
+                    );
+                } else {
+                    // to the right
+                    moveToward(
+                            destination.x + SIZE * Math.cos(destination.getAngle() + Math.PI / 2),
+                            destination.y + SIZE * Math.sin(destination.getAngle() + Math.PI / 2)
+                    );
+                }
+
+                solder.setAngle(destination.angle);
                 break;
 
             case FIRE:
@@ -243,17 +256,20 @@ public class SolderAlive implements Runnable  {
         }
     }
 
-    private void moveTowardDestination() {
-        solder.setAngle(Math.atan2(
-                destination.getY() - solder.getY(),
-                destination.getX() - solder.getX()
-        ));
+    private void moveToward(double x, double y) {
+        double sp;
+        if (solder.getId() == 0) {
+            sp = NORM_SPEED;
+        } else {
+            sp = (NORM_SPEED + distanceTo(x, y) * 0.1);
+        }
 
-        solder.setX(solder.getX() + Math.cos(solder.getAngle()) * SPEED);
-        solder.setY(solder.getY() + Math.sin(solder.getAngle()) * SPEED);
+        double distAng = Math.atan2(
+                y - solder.getY(),
+                x - solder.getX()
+        );
+        solder.setX(solder.getX() + Math.cos(distAng) * sp);
+        solder.setY(solder.getY() + Math.sin(distAng) * sp);
     }
 
-    private boolean isReachDestination() {
-        return distanceTo(destination.x, destination.y) <= SIZE;
-    }
 }

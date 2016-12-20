@@ -17,6 +17,7 @@ public class Commander implements Runnable {
     private static final String bridge_addr = System.getProperty("ros.battlefield.bridge_addr", "ws://localhost:9090");;
 
     private final Solder aim;
+    private int solderCount;
     private Random rand = new Random();
 
     private Map<Integer, Boolean> ready;
@@ -27,16 +28,17 @@ public class Commander implements Runnable {
 
     public Commander(int team, int solderCount) {
         this.team = team;
+        this.solderCount = solderCount;
         this.ready = new HashMap<>(solderCount);
 
         this.anemys = new ArrayList<>(2);
-        anemys.add(0, new CircleLine.Point(0, 0));
-        anemys.add(1, new CircleLine.Point(0, 0));
+        anemys.add(0, new CircleLine.Point(Arena.W/2, Arena.H/2));
+        anemys.add(1, new CircleLine.Point(Arena.W/2, Arena.H/2));
 
         for (int i = 0; i < solderCount; i++) {
             ready.put(i, false);
         }
-        threadPool.scheduleAtFixedRate(this, 1, 5, TimeUnit.SECONDS);
+        threadPool.scheduleAtFixedRate(this, 1, 12, TimeUnit.SECONDS);
         aim = new Solder(
                 rand.nextDouble() * Arena.W,
                 rand.nextDouble() * Arena.H,
@@ -61,7 +63,10 @@ public class Commander implements Runnable {
                             anemys.add(anemyIndex % 2, new CircleLine.Point(command.x, command.y));
                             break;
                         case INJURED:
-                            ready.remove(command.id);
+                            solderCount--;
+                            for (int i = 0; i < solderCount; i++) {
+                                ready.put(i, false);
+                            }
                         case DONE:
                             System.err.println(team + " Catch done from " + command.id);
                             ready.values().forEach((v) -> {
@@ -70,7 +75,6 @@ public class Commander implements Runnable {
                             System.out.println();
                             ready.put(command.id, true);
                             if (ready.values().stream().allMatch((b) -> b)) {
-                                System.err.println("All ready FIRE");
                                 PublishUtils.sendCommand(new Command(
                                         team,
                                         Command.Type.FIRE,
@@ -98,13 +102,18 @@ public class Commander implements Runnable {
     public void run() {
         resetReady();
 
-        aim.setX(rand.nextDouble() * Arena.W);
-        aim.setY(rand.nextDouble() * Arena.H);
+        double randAng = rand.nextDouble() * 2 * Math.PI;
+        CircleLine.Point enemy = anemys.get(0);
+        aim.setX(enemy.x + 3 * Math.cos(randAng));
+        aim.setY(enemy.y + 3 * Math.sin(randAng));
         PublishUtils.sendCommand(new Command(
                 team,
                 Command.Type.MOVE,
                 0,
-                0,
+                Math.atan2(
+                        enemy.y - aim.getY(),
+                        enemy.x - aim.getX()
+                ),
                 0,
                 0
         ));
